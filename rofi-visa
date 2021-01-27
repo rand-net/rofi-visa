@@ -1,0 +1,77 @@
+
+update_data_repo(){
+    git submodule update --remote --merge
+}
+
+visa_sel(){
+   python get_visa_status.py $RES_COUNTRY -s |rofi -dmenu -p "VISA STATUS:"
+}
+
+
+visa_free(){
+   python get_visa_status.py $RES_COUNTRY -f |rofi -dmenu -p "VISA STATUS:"
+}
+
+
+visa_required(){
+   python get_visa_status.py $RES_COUNTRY -r |rofi -dmenu -p "VISA STATUS:"
+}
+
+
+visa_voa(){
+   python get_visa_status.py $RES_COUNTRY -o |rofi -dmenu -p "VISA STATUS:"
+}
+
+
+visa_eta(){
+   python get_visa_status.py $RES_COUNTRY -e |rofi -dmenu -p "VISA STATUS:"
+}
+
+
+visa_free_days(){
+   python get_visa_status.py $RES_COUNTRY -n |rofi -dmenu -p "VISA STATUS:"
+}
+
+
+# USAGE & CMD OPTIONS
+# ====================
+
+usage(){
+    echo "Usage: "
+    echo "rofi-visa"
+    echo -e "\t -c  Current Resident Country - Required"
+    echo -e "\t -s  Visa status for selected Countries in config.yaml"
+    echo -e "\t -f  Countries not requiring visa"
+    echo -e "\t -r  Countries requiring Visa"
+    echo -e "\t -o  Countries offering Visa on arrival"
+    echo -e "\t -e  Countries offering Electronic Travel Authority"
+    echo -e "\t -n  Countries offering visa free days"
+    echo -e "\t -u  Update data repo"
+    echo -e "\t -h  help"
+    exit 2
+}
+
+while getopts ':c:sfroenuh' c
+do
+    case $c in
+        c) RES_COUNTRY=$OPTARG ;;
+        s) visa_sel ;;
+        f) visa_free ;;
+        r) visa_required ;;
+        o) visa_voa ;;
+        e) visa_eta ;;
+        n) visa_free_days ;;
+        u) update_data_repo ;;
+        h) usage ;;
+    esac
+done
+shift $((OPTIND-1))
+
+#
+# mandatory arguments
+if [ ! "$RES_COUNTRY" ] ; then
+
+  echo ""
+  echo "argument -c Current Resident Country must be provided"
+  usage >&2; exit 1
+fi
